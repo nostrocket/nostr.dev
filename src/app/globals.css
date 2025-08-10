@@ -30,3 +30,15 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Ensure proper overflow handling for all containers */
+* {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* Force all pre elements to handle overflow properly */
+pre {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}

@@ -138,8 +138,8 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
         ) : liveEvents.length > 0 ? (
           <div className="space-y-4">
             {liveEvents.map((event, index) => (
-              <div key={event.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div key={event.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden min-w-0">
+                <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between min-w-0">
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Live Example {index + 1}
@@ -200,8 +200,8 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
         </h3>
         <div className="space-y-4">
           {libraryExamples.map((example, index) => (
-            <div key={index} className="border rounded-lg overflow-hidden">
-              <div className="bg-gray-50 px-4 py-3 border-b">
+            <div key={index} className="border rounded-lg overflow-hidden min-w-0">
+              <div className="bg-gray-50 px-4 py-3 border-b min-w-0">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-sm font-semibold text-gray-900">
