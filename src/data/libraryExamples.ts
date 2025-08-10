@@ -23,20 +23,30 @@ pool.publish(['wss://relay.example.com'], event)`
     {
       library: 'ndk',
       title: 'Create and Publish Event with NDK',
-      description: 'Event creation and publishing using NDK',
-      code: `import NDK, { NDKEvent } from '@nostr-dev-kit/ndk'
+      description: 'Event creation and publishing using NDK with signer',
+      code: `import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'
+
+// Optional: Set up signer for browser extension
+const signer = new NDKNip07Signer()
 
 const ndk = new NDK({
-  explicitRelayUrls: ['wss://relay.example.com']
+  explicitRelayUrls: ['wss://relay.example.com'],
+  signer // Optional: for automatic signing
 })
-await ndk.connect()
 
-const event = new NDKEvent(ndk)
-event.kind = ${kind}
-event.content = "Hello Nostr!"
-event.tags = []
-
-await event.publish()`
+try {
+  await ndk.connect()
+  
+  const event = new NDKEvent(ndk)
+  event.kind = ${kind}
+  event.content = "Hello Nostr!"
+  event.tags = []
+  event.created_at = Math.floor(Date.now() / 1000)
+  
+  await event.publish()
+} catch (error) {
+  console.error('Failed to publish event:', error)
+}`
     }
   ];
 
@@ -71,25 +81,34 @@ pool.publish(['wss://relay.example.com'], event)`
       {
         library: 'ndk',
         title: 'Update Profile with NDK',
-        description: 'Update user profile using NDK',
-        code: `import NDK, { NDKEvent } from '@nostr-dev-kit/ndk'
+        description: 'Update user profile using NDK with NIP-07 signer',
+        code: `import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'
 
+const signer = new NDKNip07Signer()
 const ndk = new NDK({
-  explicitRelayUrls: ['wss://relay.example.com']
+  explicitRelayUrls: ['wss://relay.example.com'],
+  signer
 })
-await ndk.connect()
 
-const profile = {
-  name: "Alice", 
-  about: "Bitcoin enthusiast",
-  picture: "https://example.com/alice.jpg"
-}
+try {
+  await ndk.connect()
 
-const event = new NDKEvent(ndk)
-event.kind = 0
-event.content = JSON.stringify(profile)
+  const profile = {
+    name: "Alice", 
+    about: "Bitcoin enthusiast",
+    picture: "https://example.com/alice.jpg",
+    nip05: "alice@example.com"
+  }
 
-await event.publish()`
+  const event = new NDKEvent(ndk)
+  event.kind = 0
+  event.content = JSON.stringify(profile)
+  event.created_at = Math.floor(Date.now() / 1000)
+
+  await event.publish()
+} catch (error) {
+  console.error('Failed to update profile:', error)
+}`
       }
     ];
   }
@@ -117,19 +136,28 @@ pool.publish(['wss://relay.example.com'], event)`
       {
         library: 'ndk',
         title: 'Publish Note with NDK',
-        description: 'Create and publish a text note using NDK',
-        code: `import NDK, { NDKEvent } from '@nostr-dev-kit/ndk'
+        description: 'Create and publish a text note using NDK with signer',
+        code: `import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'
 
+const signer = new NDKNip07Signer()
 const ndk = new NDK({
-  explicitRelayUrls: ['wss://relay.example.com']
+  explicitRelayUrls: ['wss://relay.example.com'],
+  signer
 })
-await ndk.connect()
 
-const event = new NDKEvent(ndk)
-event.kind = 1
-event.content = "This is my first nostr note!"
+try {
+  await ndk.connect()
 
-await event.publish()`
+  const event = new NDKEvent(ndk)
+  event.kind = 1
+  event.content = "This is my first nostr note!"
+  event.tags = []
+  event.created_at = Math.floor(Date.now() / 1000)
+
+  await event.publish()
+} catch (error) {
+  console.error('Failed to publish note:', error)
+}`
       }
     ];
   }
@@ -162,23 +190,31 @@ pool.publish(['wss://relay.example.com'], event)`
       {
         library: 'ndk',
         title: 'Update Follows with NDK',
-        description: 'Update follow list using NDK',
-        code: `import NDK, { NDKEvent } from '@nostr-dev-kit/ndk'
+        description: 'Update follow list using NDK with signer',
+        code: `import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'
 
+const signer = new NDKNip07Signer()
 const ndk = new NDK({
-  explicitRelayUrls: ['wss://relay.example.com']
+  explicitRelayUrls: ['wss://relay.example.com'],
+  signer
 })
-await ndk.connect()
 
-const event = new NDKEvent(ndk)
-event.kind = 3
-event.content = ""
-event.tags = [
-  ['p', 'pubkey1', 'wss://relay1.com', 'alice'],
-  ['p', 'pubkey2', 'wss://relay2.com', 'bob']
-]
+try {
+  await ndk.connect()
 
-await event.publish()`
+  const event = new NDKEvent(ndk)
+  event.kind = 3
+  event.content = ""
+  event.tags = [
+    ['p', 'pubkey1', 'wss://relay1.com', 'alice'],
+    ['p', 'pubkey2', 'wss://relay2.com', 'bob']
+  ]
+  event.created_at = Math.floor(Date.now() / 1000)
+
+  await event.publish()
+} catch (error) {
+  console.error('Failed to update follows:', error)
+}`
       }
     ];
   }
