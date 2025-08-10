@@ -40,7 +40,7 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
   };
 
   return (
-    <div className="p-4 lg:p-6 max-w-full">
+    <div className="p-4 lg:p-6 w-full max-w-full min-w-0">
       {/* Header */}
       <div className="mb-6">
         <div className="mb-4">
@@ -165,7 +165,7 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
                     )}
                   </button>
                 </div>
-                <div className="overflow-hidden">
+                <div className="overflow-hidden min-w-0">
                   <CodeBlock 
                     code={JSON.stringify(event, null, 2)} 
                     language="json"
@@ -234,7 +234,7 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
                   </div>
                 </div>
               </div>
-              <div className="overflow-hidden">
+              <div className="overflow-hidden min-w-0">
                 <CodeBlock 
                   code={example.code} 
                   language="javascript"
