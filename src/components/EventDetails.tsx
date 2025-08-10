@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Copy, Check, ExternalLink } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Copy, Check, ExternalLink, RefreshCw } from 'lucide-react';
 import { EventKind } from '@/types';
 import { getLibraryExamples } from '@/data/libraryExamples';
+import { useNostrEvents } from '@/hooks/useNostrEvents';
 import { CodeBlock } from './CodeBlock';
 
 interface EventDetailsProps {
@@ -11,6 +12,12 @@ interface EventDetailsProps {
 export function EventDetails({ eventKind }: EventDetailsProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const libraryExamples = getLibraryExamples(eventKind.kind);
+  const { events: liveEvents, isLoading, error, fetchEvents } = useNostrEvents();
+
+  useEffect(() => {
+    // Fetch events for this kind when component mounts
+    fetchEvents(eventKind.kind);
+  }, [eventKind.kind, fetchEvents]);
 
   const handleCopy = async (text: string, id: string) => {
     try {
@@ -94,22 +101,58 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
 
       {/* Real Examples */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-          Real Examples from Pyramid Relay
-        </h3>
-        {eventKind.examples && eventKind.examples.length > 0 ? (
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Live Examples from Nostr Relays
+          </h3>
+          <button
+            onClick={() => fetchEvents(eventKind.kind)}
+            disabled={isLoading}
+            className="inline-flex items-center gap-1 text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded px-3 py-1.5 transition-colors"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            {isLoading ? 'Fetching...' : 'Refresh'}
+          </button>
+        </div>
+        
+        {isLoading ? (
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
+            <div className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <RefreshCw className="h-5 w-5 animate-spin" />
+              Fetching live events from relays...
+            </div>
+          </div>
+        ) : error ? (
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
+            <div className="text-4xl text-gray-300 dark:text-gray-600 mb-3">⚠️</div>
+            <p className="text-gray-600 dark:text-gray-400 mb-2">
+              {error}
+            </p>
+            <button
+              onClick={() => fetchEvents(eventKind.kind)}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Try again
+            </button>
+          </div>
+        ) : liveEvents.length > 0 ? (
           <div className="space-y-4">
-            {eventKind.examples.map((event, index) => (
+            {liveEvents.map((event, index) => (
               <div key={event.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                 <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Example {index + 1}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Live Example {index + 1}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {new Date(event.created_at * 1000).toLocaleString()}
+                    </span>
+                  </div>
                   <button
-                    onClick={() => handleCopy(JSON.stringify(event, null, 2), `event-${event.id}`)}
+                    onClick={() => handleCopy(JSON.stringify(event, null, 2), `live-event-${event.id}`)}
                     className="inline-flex items-center gap-1 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                   >
-                    {copiedId === `event-${event.id}` ? (
+                    {copiedId === `live-event-${event.id}` ? (
                       <>
                         <Check className="h-3 w-3" />
                         Copied
@@ -135,11 +178,17 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
           <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
             <div className="text-4xl text-gray-300 dark:text-gray-600 mb-3">📡</div>
             <p className="text-gray-600 dark:text-gray-400 mb-2">
-              No real examples currently available
+              No recent events of kind {eventKind.kind} found
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
-              Real event examples will appear here when available from pyramid.fiatjaf.com relay
+            <p className="text-sm text-gray-500 dark:text-gray-500 mb-3">
+              This event kind may be rare or not currently active on the relays
             </p>
+            <button
+              onClick={() => fetchEvents(eventKind.kind)}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Try fetching again
+            </button>
           </div>
         )}
       </div>

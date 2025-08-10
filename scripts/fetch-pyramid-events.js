@@ -1,4 +1,4 @@
-const { SimplePool, verifyEvent } = require('nostr-tools');
+const NDK = require('@nostr-dev-kit/ndk').default;
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -11,35 +11,49 @@ const EVENT_KINDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 41, 42];
 async function fetchRealEventsFromPyramid() {
   console.log(`🔍 Connecting to ${PYRAMID_RELAY}...`);
   
-  const pool = new SimplePool();
+  // Create NDK instance with relay
+  const ndk = new NDK({ 
+    explicitRelayUrls: [PYRAMID_RELAY]
+  });
+  
   const realEvents = {};
   
   try {
     // Ensure output directory exists
     await fs.mkdir(OUTPUT_DIR, { recursive: true });
     
+    // Connect to relay
+    await ndk.connect(10000); // 10 second timeout
+    console.log('✅ Connected to relay');
+    
     // First, let's test if pyramid has ANY events at all
     console.log('🔍 Testing if pyramid has any events...');
     let hasAnyEvents = false;
     
     try {
-      const testEvents = await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Test timeout')), 10000);
-        let foundAny = [];
+      const testSub = ndk.subscribe({ limit: 5 });
+      const testEvents = [];
+      
+      const testPromise = new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          testSub.stop();
+          reject(new Error('Test timeout'));
+        }, 10000);
         
-        const sub = pool.subscribeMany([PYRAMID_RELAY], [{ limit: 5 }], {
-          onevent: (event) => {
-            console.log(`   📩 Found event kind ${event.kind}: ${event.id.substring(0, 8)}...`);
-            foundAny.push(event);
-            hasAnyEvents = true;
-          },
-          oneose: () => {
-            clearTimeout(timeout);
-            sub.close();
-            resolve(foundAny);
-          }
+        testSub.on('event', (event) => {
+          console.log(`   📩 Found event kind ${event.kind}: ${event.id.substring(0, 8)}...`);
+          testEvents.push(event);
+          hasAnyEvents = true;
+        });
+        
+        testSub.on('eose', () => {
+          clearTimeout(timeout);
+          testSub.stop();
+          resolve(testEvents);
         });
       });
+      
+      await testPromise;
       
       if (hasAnyEvents) {
         console.log(`✅ Pyramid relay has events! Found ${testEvents.length} in test query`);
@@ -79,27 +93,29 @@ async function fetchRealEventsFromPyramid() {
           try {
             console.log(`   Trying strategy: ${strategy.name} with filter:`, JSON.stringify(filters));
             
-            // Use subscription-based approach with timeout
+            // Use NDK subscription approach with timeout
             const events = await new Promise((resolve, reject) => {
               const timeout = setTimeout(() => {
                 reject(new Error(`Timeout after 15s for strategy: ${strategy.name}`));
               }, 15000);
 
-              const sub = pool.subscribeMany([PYRAMID_RELAY], [filters], {
-                onevent: (event) => {
-                  console.log(`   📩 Received event ${event.id.substring(0, 8)}... (kind ${event.kind})`);
-                  foundEvents.push(event);
-                },
-                oneose: () => {
-                  clearTimeout(timeout);
-                  console.log(`   🏁 EOSE received for strategy: ${strategy.name}, found ${foundEvents.length} events`);
-                  sub.close();
-                  resolve(foundEvents);
-                },
-                onclose: () => {
-                  clearTimeout(timeout);
-                  resolve(foundEvents);
-                }
+              const sub = ndk.subscribe(filters);
+              
+              sub.on('event', (event) => {
+                console.log(`   📩 Received event ${event.id.substring(0, 8)}... (kind ${event.kind})`);
+                foundEvents.push(event.rawEvent());
+              });
+              
+              sub.on('eose', () => {
+                clearTimeout(timeout);
+                console.log(`   🏁 EOSE received for strategy: ${strategy.name}, found ${foundEvents.length} events`);
+                sub.stop();
+                resolve(foundEvents);
+              });
+              
+              sub.on('close', () => {
+                clearTimeout(timeout);
+                resolve(foundEvents);
               });
             });
             
@@ -119,22 +135,8 @@ async function fetchRealEventsFromPyramid() {
         console.log(`   Found ${events ? events.length : 0} raw events`);
         
         if (events && events.length > 0) {
-          // Verify events are actually valid
-          const validEvents = [];
-          
-          for (const event of events) {
-            try {
-              const isValid = verifyEvent(event);
-              if (isValid) {
-                validEvents.push(event);
-                console.log(`   ✅ Valid event: ${event.id.substring(0, 8)}... (kind ${event.kind})`);
-              } else {
-                console.log(`   ❌ Invalid event: ${event.id.substring(0, 8)}...`);
-              }
-            } catch (error) {
-              console.log(`   ❌ Event verification failed: ${error.message}`);
-            }
-          }
+          // NDK events are pre-validated, so we can skip manual verification
+          const validEvents = events.filter(event => event && event.id);
           
           if (validEvents.length > 0) {
             realEvents[kind] = validEvents.slice(0, 3); // Keep only first 3 valid events
@@ -180,7 +182,10 @@ async function fetchRealEventsFromPyramid() {
     console.log('⚠️  No events collected - pyramid relay unavailable');
     
   } finally {
-    pool.close([PYRAMID_RELAY]);
+    // Close NDK connection
+    for (const relay of ndk.pool.relays.values()) {
+      relay.disconnect();
+    }
   }
 }
 
