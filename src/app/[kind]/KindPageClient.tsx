@@ -7,9 +7,12 @@ import { MainContent } from '@/components/MainContent'
 import { SearchBar } from '@/components/SearchBar'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
-export default function Home() {
+interface KindPageClientProps {
+  kindNum: number
+}
+
+export function KindPageClient({ kindNum }: KindPageClientProps) {
   const router = useRouter()
-  const [selectedKind, setSelectedKind] = useState<number | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -53,11 +56,11 @@ export default function Home() {
           />
         </div>
         <Sidebar 
-          selectedKind={selectedKind}
+          selectedKind={kindNum}
           onKindSelect={(kind) => {
-            // Navigate to the specific kind URL
+            // Navigate to the new kind URL
             router.push(`/${kind}`)
-            setSidebarOpen(false) // Close sidebar on mobile after selection
+            setSidebarOpen(false)
           }}
           searchQuery={searchQuery}
         />
@@ -74,14 +77,14 @@ export default function Home() {
             <span className="text-gray-700 dark:text-gray-300">☰</span>
           </button>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {selectedKind !== null ? `Kind ${selectedKind}` : 'Nostr Reference'}
+            Kind {kindNum}
           </h2>
           <div className="block lg:hidden">
             <ThemeToggle />
           </div>
         </div>
         
-        <MainContent selectedKind={selectedKind} />
+        <MainContent selectedKind={kindNum} />
       </div>
     </div>
   )
