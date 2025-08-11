@@ -246,10 +246,26 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
       </div>
 
       {/* Footer */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <p className="text-sm text-gray-500">
-          https://github.com/nostrocket/nostr.dev
-        </p>
+      <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <a 
+            href="https://github.com/nostrocket/nostr.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-700 dark:hover:text-gray-300 hover:underline"
+          >
+            https://github.com/nostrocket/nostr.dev
+          </a>
+          <a 
+            href="https://github.com/nostrocket/nostr.dev/issues/new"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline"
+          >
+            Report an issue or suggest a feature
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        </div>
       </div>
     </div>
   );
