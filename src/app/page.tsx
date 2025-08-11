@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/Sidebar'
 import { MainContent } from '@/components/MainContent'
 import { SearchBar } from '@/components/SearchBar'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { ExternalLink } from 'lucide-react'
 
 export default function Home() {
   const router = useRouter()
@@ -36,6 +37,16 @@ export default function Home() {
               Nostr Event Kinds
             </h1>
             <div className="flex items-center gap-2">
+              <a
+                href="https://github.com/nostrocket/nostr.dev/issues/new"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden lg:flex items-center gap-1 px-2 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+              >
+                Report
+                <ExternalLink className="h-3 w-3" />
+                <span className="ml-1 px-1 py-0.5 text-xs bg-green-500 text-white rounded">new</span>
+              </a>
               <div className="hidden lg:block">
                 <ThemeToggle />
               </div>
@@ -76,8 +87,20 @@ export default function Home() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {selectedKind !== null ? `Kind ${selectedKind}` : 'Nostr Reference'}
           </h2>
-          <div className="block lg:hidden">
-            <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/nostrocket/nostr.dev/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="lg:hidden flex items-center gap-1 px-2 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+            >
+              Report
+              <ExternalLink className="h-3 w-3" />
+              <span className="ml-1 px-1 py-0.5 text-xs bg-green-500 text-white rounded">new</span>
+            </a>
+            <div className="block lg:hidden">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
         
