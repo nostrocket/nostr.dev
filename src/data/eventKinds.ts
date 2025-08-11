@@ -4,7 +4,7 @@ export const eventKinds = [
   {
     kind: 0,
     name: 'User Metadata',
-    description: 'User profile information including name, about, and picture',
+    description: 'Replaceable event containing user profile metadata as a stringified JSON object with name, about, and picture fields.',
     nip: 'NIP-01',
     category: 'replaceable',
     tags: []
@@ -12,7 +12,7 @@ export const eventKinds = [
   {
     kind: 1,
     name: 'Short Text Note',
-    description: 'Short text note, the basic social media post',
+    description: 'Regular event representing the fundamental building block of Nostr, containing short-form text content like social media posts.',
     nip: 'NIP-01',
     category: 'regular',
     tags: []
@@ -20,7 +20,7 @@ export const eventKinds = [
   {
     kind: 3,
     name: 'Follows',
-    description: 'Contact list, follow list',
+    description: 'Replaceable contact list event containing p tags for followed pubkeys with optional relay hints and local petnames.',
     nip: 'NIP-02',
     category: 'replaceable',
     tags: [
@@ -30,7 +30,7 @@ export const eventKinds = [
   {
     kind: 4,
     name: 'Encrypted Direct Messages',
-    description: 'Encrypted direct message',
+    description: 'Deprecated encrypted direct message event using shared secret encryption between sender and recipient pubkeys.',
     nip: 'NIP-04',
     category: 'regular',
     tags: [
@@ -40,7 +40,7 @@ export const eventKinds = [
   {
     kind: 5,
     name: 'Event Deletion Request',
-    description: 'Event deletion request',
+    description: 'Event requesting deletion of previously published events by specifying their IDs in e tags.',
     nip: 'NIP-09',
     category: 'regular',
     tags: [
@@ -50,7 +50,7 @@ export const eventKinds = [
   {
     kind: 6,
     name: 'Repost',
-    description: 'Repost of another event',
+    description: 'Event that reposts another event by including the original event JSON in content and referencing it with e and p tags.',
     nip: 'NIP-18',
     category: 'regular',
     tags: [
@@ -61,7 +61,7 @@ export const eventKinds = [
   {
     kind: 7,
     name: 'Reaction',
-    description: 'Reaction to another event (like, dislike, emoji)',
+    description: 'Reaction event with content "+" for like, "-" for dislike, or emoji, targeting another event via e and p tags.',
     nip: 'NIP-25',
     category: 'regular',
     tags: [
@@ -72,7 +72,7 @@ export const eventKinds = [
   {
     kind: 8,
     name: 'Badge Award',
-    description: 'Badge award',
+    description: 'Event awarding a badge to a pubkey, referencing the badge definition and recipient.',
     nip: 'NIP-58',
     category: 'regular',
     tags: []
@@ -80,7 +80,7 @@ export const eventKinds = [
   {
     kind: 9,
     name: 'Chat Message',
-    description: 'Group chat message',
+    description: 'Message sent to a group chat with moderation and access control managed by group admins.',
     nip: 'NIP-29',
     category: 'regular',
     tags: []
@@ -88,7 +88,7 @@ export const eventKinds = [
   {
     kind: 2,
     name: 'Recommend Relay',
-    description: 'Recommend relay (deprecated)',
+    description: 'Deprecated event type that was used to recommend relay servers to other users.',
     nip: 'NIP-01',
     category: 'regular',
     tags: []
@@ -120,7 +120,7 @@ export const eventKinds = [
   {
     kind: 13,
     name: 'Seal',
-    description: 'Sealed event for private messaging',
+    description: 'Sealed event containing encrypted content as part of the gift wrap private messaging protocol.',
     nip: 'NIP-59',
     category: 'regular',
     tags: []
@@ -128,7 +128,7 @@ export const eventKinds = [
   {
     kind: 14,
     name: 'Direct Message',
-    description: 'Direct message using gift wrap',
+    description: 'Private direct message event using the gift wrap protocol with enhanced privacy and metadata protection.',
     nip: 'NIP-17',
     category: 'regular',
     tags: []
@@ -144,7 +144,7 @@ export const eventKinds = [
   {
     kind: 16,
     name: 'Generic Repost',
-    description: 'Generic repost',
+    description: 'Generic repost event that can reference any kind of event with optional additional commentary.',
     nip: 'NIP-18',
     category: 'regular',
     tags: []
@@ -168,7 +168,7 @@ export const eventKinds = [
   {
     kind: 21,
     name: 'Video Event',
-    description: 'Video event',
+    description: 'Event containing video content metadata including URL, thumbnail, duration, and other video properties.',
     nip: 'NIP-71',
     category: 'regular',
     tags: []
@@ -216,7 +216,7 @@ export const eventKinds = [
   {
     kind: 40,
     name: 'Channel Creation',
-    description: 'Channel creation',
+    description: 'Event that creates a new public channel with metadata like name, about, and picture.',
     nip: 'NIP-28',
     category: 'regular',
     tags: []
@@ -232,7 +232,7 @@ export const eventKinds = [
   {
     kind: 42,
     name: 'Channel Message',
-    description: 'Channel message',
+    description: 'Message posted to a public channel, referencing the channel creation event.',
     nip: 'NIP-28',
     category: 'regular',
     tags: []
@@ -272,7 +272,7 @@ export const eventKinds = [
   {
     kind: 1063,
     name: 'File Metadata',
-    description: 'File metadata',
+    description: 'Event containing metadata about a file including URL, hash, MIME type, and other descriptive information.',
     nip: 'NIP-94',
     category: 'regular',
     tags: []
@@ -280,7 +280,7 @@ export const eventKinds = [
   {
     kind: 1311,
     name: 'Live Chat Message',
-    description: 'Live chat message',
+    description: 'Chat message posted to a live event or streaming session with real-time interaction capabilities.',
     nip: 'NIP-53',
     category: 'regular',
     tags: []
@@ -320,7 +320,7 @@ export const eventKinds = [
   {
     kind: 1984,
     name: 'Reporting',
-    description: 'Reporting content or users',
+    description: 'Event for reporting content or users to relay operators with standardized report types and reasons.',
     nip: 'NIP-56',
     category: 'regular',
     tags: []
@@ -328,7 +328,7 @@ export const eventKinds = [
   {
     kind: 1985,
     name: 'Label',
-    description: 'Content labeling',
+    description: 'Event for labeling other events or entities with standardized or custom labels and namespaces.',
     nip: 'NIP-32',
     category: 'regular',
     tags: []
@@ -336,7 +336,7 @@ export const eventKinds = [
   {
     kind: 9734,
     name: 'Zap Request',
-    description: 'Zap request for Lightning payments',
+    description: 'Lightning payment request event sent to LNURL callback containing recipient and optional message, not published to relays.',
     nip: 'NIP-57',
     category: 'regular',
     tags: []
@@ -344,7 +344,7 @@ export const eventKinds = [
   {
     kind: 9735,
     name: 'Zap',
-    description: 'Zap receipt for Lightning payments',
+    description: 'Lightning payment receipt event created when a zap request invoice is paid, containing the original request and bolt11 invoice.',
     nip: 'NIP-57',
     category: 'regular',
     tags: []
@@ -352,7 +352,7 @@ export const eventKinds = [
   {
     kind: 10000,
     name: 'Mute List',
-    description: 'Mute list',
+    description: 'Replaceable list of muted pubkeys and event IDs that the user wants to filter from their feeds.',
     nip: 'NIP-51',
     category: 'replaceable',
     tags: []
@@ -368,7 +368,7 @@ export const eventKinds = [
   {
     kind: 10002,
     name: 'Relay List Metadata',
-    description: 'Relay list metadata',
+    description: 'Replaceable list defining which relays a user reads from and writes to, with read/write permissions.',
     nip: 'NIP-65',
     category: 'replaceable',
     tags: []
@@ -440,7 +440,7 @@ export const eventKinds = [
   {
     kind: 30000,
     name: 'Categorized People',
-    description: 'Categorized people list',
+    description: 'Addressable list of pubkeys organized into custom categories defined by the d tag identifier.',
     nip: 'NIP-51',
     category: 'addressable',
     tags: []
@@ -456,7 +456,7 @@ export const eventKinds = [
   {
     kind: 30023,
     name: 'Long-form Content',
-    description: 'Long-form text content, articles, blog posts',
+    description: 'Addressable event for long-form Markdown content like articles and blog posts with optional metadata tags.',
     nip: 'NIP-23',
     category: 'addressable',
     tags: [
@@ -516,7 +516,7 @@ export const eventKinds = [
   {
     kind: 31922,
     name: 'Date-Based Calendar Event',
-    description: 'Date-based calendar event',
+    description: 'Addressable calendar event for all-day or multi-day events without specific times.',
     nip: 'NIP-52',
     category: 'addressable',
     tags: []
@@ -556,7 +556,7 @@ export const eventKinds = [
   {
     kind: 34550,
     name: 'Community Definition',
-    description: 'Community definition',
+    description: 'Addressable event defining a community with metadata, rules, and moderation parameters.',
     nip: 'NIP-72',
     category: 'addressable',
     tags: []
