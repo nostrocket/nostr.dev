@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { EventKind } from '@/types';
 import { searchEventKinds } from '@/lib/eventData';
 
@@ -30,14 +31,14 @@ export function Sidebar({ selectedKind, onKindSelect, searchQuery }: SidebarProp
     <div className="flex-1 overflow-y-auto min-h-0">
       {/* AI Reference Link */}
       <div className="p-3 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
-        <a 
+        <Link 
           href="/ai-reference" 
           className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 font-medium"
         >
           <span className="text-lg">🤖</span>
           <span>AI Reference Guide</span>
           <span className="ml-auto text-xs bg-blue-200 dark:bg-blue-800 px-2 py-0.5 rounded">NEW</span>
-        </a>
+        </Link>
         <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
           Machine-readable docs for AI agents
         </div>

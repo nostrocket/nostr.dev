@@ -51,7 +51,7 @@ export default function AIReferencePage() {
             </div>
           </div>
           <div className="bg-blue-100 p-2 rounded mt-3">
-            <strong>Quick Start for AI:</strong> Use the search below to find events by use case (e.g., "profile", "messaging", "social media"), then view implementation details with working code examples.
+            <strong>Quick Start for AI:</strong> Use the search below to find events by use case (e.g., &quot;profile&quot;, &quot;messaging&quot;, &quot;social media&quot;), then view implementation details with working code examples.
           </div>
         </div>
       </div>
@@ -228,7 +228,7 @@ export default function AIReferencePage() {
             <div className="bg-purple-50 p-3 rounded text-sm">
               <div><strong>TypeScript Imports:</strong></div>
               <code className="text-xs bg-white p-1 rounded block mb-1">
-                import &#123; getEventByKind, searchEventsByUsage &#125; from '@/data/ai-event-reference'
+                import &#123; getEventByKind, searchEventsByUsage &#125; from &apos;@/data/ai-event-reference&apos;
               </code>
               <div className="text-xs text-purple-600">
                 Use these functions for dynamic queries, validation, and implementation guidance.
@@ -243,7 +243,7 @@ export default function AIReferencePage() {
             <div className="bg-white p-3 rounded border-l-4 border-blue-400">
               <div className="font-medium text-blue-700">1. Discover</div>
               <div className="text-xs text-gray-600 mt-1">
-                Use <code>searchEventsByUsage("social media")</code> to find relevant event kinds
+                Use <code>searchEventsByUsage(&quot;social media&quot;)</code> to find relevant event kinds
               </div>
             </div>
             <div className="bg-white p-3 rounded border-l-4 border-yellow-400">

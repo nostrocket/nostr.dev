@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { EventKind } from '@/types';
 import { getEventKind } from '@/lib/eventData';
 import { EventDetails } from './EventDetails';
@@ -47,12 +48,12 @@ export function MainContent({ selectedKind }: MainContentProps) {
               <div>⚡ <strong>Functions:</strong> <code>getEventByKind()</code>, <code>searchEventsByUsage()</code>, <code>validateEventStructure()</code></div>
             </div>
             <div className="mt-3">
-              <a 
+              <Link 
                 href="/ai-reference" 
                 className="inline-block bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
               >
                 Access AI Reference →
-              </a>
+              </Link>
             </div>
           </div>
 
