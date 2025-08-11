@@ -1,15 +1,14 @@
 # Nostr Event Kinds Reference
 
-A comprehensive, searchable reference for Nostr event kinds with real-world examples and library usage code.
+A comprehensive, searchable reference for Nostr event kinds with documentation and library usage examples.
 
 ## Features
 
-✨ **Valid Examples**: Uses properly signed, structurally correct Nostr events generated with nostr-tools  
 🔍 **Advanced Search**: Search by event kind number, name, description, or NIP  
 📱 **Mobile-Friendly**: Responsive email client-style layout that works on all devices  
 📚 **Code Examples**: Ready-to-use code snippets for nostr-tools and NDK  
 🚀 **Static Site**: Built with Next.js static export for fast, serverless deployment  
-🔄 **Auto-Updated**: GitHub Actions automatically fetches fresh event examples  
+🔄 **Auto-Deploy**: GitHub Actions automatically builds and deploys to GitHub Pages  
 
 ## Quick Start
 
@@ -20,9 +19,6 @@ cd nostr.dev
 
 # Install dependencies
 npm install
-
-# Generate valid example events  
-npm run fetch-events
 
 # Start development server
 npm run dev
@@ -35,7 +31,6 @@ npm run build
 
 - **Next.js 15** with TypeScript and static export
 - **Tailwind CSS** for styling
-- **Valid Nostr events** generated with proper signatures using nostr-tools
 - **Client-side search** with instant filtering
 - **GitHub Pages** deployment ready
 
@@ -51,7 +46,7 @@ This reference includes comprehensive documentation for:
 - **And many more...**
 
 Each event kind includes:
-- Valid JSON examples with proper signatures
+- Detailed documentation and specifications
 - Tag specifications  
 - NIP documentation links
 - nostr-tools and NDK usage examples
@@ -59,9 +54,6 @@ Each event kind includes:
 ## Development
 
 ```bash
-# Generate valid event examples
-npm run fetch-events
-
 # Run development server
 npm run dev
 
@@ -75,7 +67,7 @@ npm run build
 
 This site is configured for automatic deployment to GitHub Pages via GitHub Actions. On every push to main:
 
-1. Valid event examples are generated using nostr-tools
+1. Dependencies are installed
 2. The site is built statically with Next.js  
 3. Deployed to GitHub Pages automatically
 
