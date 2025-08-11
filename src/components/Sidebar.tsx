@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EventKind } from '@/types';
 import { searchEventKinds } from '@/lib/eventData';
 import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 interface SidebarProps {
   selectedKind: number | null;
@@ -11,10 +12,13 @@ interface SidebarProps {
 
 export function Sidebar({ selectedKind, onKindSelect, searchQuery }: SidebarProps) {
   const [eventKinds, setEventKinds] = useState<EventKind[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const kinds = searchEventKinds(searchQuery);
     setEventKinds(kinds);
+    setLoading(false);
   }, [searchQuery]);
 
   const getCategoryColor = (category: EventKind['category']) => {
@@ -49,8 +53,27 @@ export function Sidebar({ selectedKind, onKindSelect, searchQuery }: SidebarProp
             <ExternalLink className="h-4 w-4 text-gray-400" />
           </a>
         </div>
-        
-        {eventKinds.map((kind) => (
+
+        {/* Access AI Reference Button */}
+        <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+          <Link
+            href="/ai-reference"
+            className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 rounded transition-colors font-semibold text-sm"
+          >
+            Access AI Reference
+          </Link>
+        </div>
+
+        {/* Loading Indicator */}
+        {loading && (
+          <div className="p-4 text-center text-gray-500 dark:text-gray-400 animate-pulse">
+            <span className="inline-block w-4 h-4 mr-2 rounded-full border-2 border-blue-400 border-t-transparent animate-spin align-middle"></span>
+            Loading event kinds...
+          </div>
+        )}
+
+        {/* Event Kinds List */}
+        {!loading && eventKinds.map((kind) => (
           <div
             key={kind.kind}
             className={`p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
@@ -88,7 +111,9 @@ export function Sidebar({ selectedKind, onKindSelect, searchQuery }: SidebarProp
             )}
           </div>
         ))}
-        {eventKinds.length === 0 && (
+
+        {/* No Results Message */}
+        {!loading && eventKinds.length === 0 && (
           <div className="p-4 text-center text-gray-500 dark:text-gray-400">
             <p>No event kinds found</p>
             <p className="text-xs mt-1">Try adjusting your search</p>
