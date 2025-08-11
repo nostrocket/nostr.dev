@@ -135,7 +135,7 @@ export function WebSocketTest() {
         </h3>
         <div className="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm h-64 overflow-y-auto">
           {logs.length === 0 ? (
-            <div className="text-gray-500">Click "Test Connection" to start...</div>
+            <div className="text-gray-500">Click &quot;Test Connection&quot; to start...</div>
           ) : (
             logs.map((log, index) => (
               <div key={index} className="whitespace-pre-wrap">
