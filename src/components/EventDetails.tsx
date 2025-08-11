@@ -201,23 +201,23 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
         <div className="space-y-4">
           {libraryExamples.map((example, index) => (
             <div key={index} className="border rounded-lg overflow-hidden min-w-0">
-              <div className="bg-gray-50 px-4 py-3 border-b min-w-0">
+              <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700 min-w-0">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-900">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                       {example.title}
                     </h4>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       {example.description}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                       {example.library}
                     </span>
                     <button
                       onClick={() => handleCopy(example.code, `lib-${index}`)}
-                      className="inline-flex items-center gap-1 text-xs bg-white border border-gray-300 rounded px-2 py-1 hover:bg-gray-50 transition-colors"
+                      className="inline-flex items-center gap-1 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                     >
                       {copiedId === `lib-${index}` ? (
                         <>
