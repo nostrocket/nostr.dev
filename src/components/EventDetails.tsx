@@ -248,8 +248,7 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
       {/* Footer */}
       <div className="mt-8 pt-6 border-t border-gray-200">
         <p className="text-sm text-gray-500">
-          💡 This reference uses real event examples and provides practical code snippets 
-          for building Nostr applications. All examples are anonymized for privacy.
+          https://github.com/nostrocket/nostr.dev
         </p>
       </div>
     </div>
