@@ -1,0 +1,380 @@
+{
+  "metadata": {
+    "title": "AI-Optimized Nostr Event Reference",
+    "description": "Comprehensive machine-readable reference for AI agents to understand and implement Nostr event kinds",
+    "version": "1.0.0",
+    "generated": "2024-01-01T00:00:00.000Z",
+    "totalEventKinds": 5
+  },
+  "quickReference": {
+    "basic_events": {
+      "0": "User profile metadata (JSON)",
+      "1": "Text notes and posts",
+      "3": "Follow lists (contact lists)",
+      "7": "Reactions (likes, dislikes, emojis)",
+      "30023": "Long-form articles (Markdown)"
+    },
+    "categories": {
+      "regular": "Normal events that can be replaced by newer ones",
+      "replaceable": "Latest event of this kind replaces older ones",
+      "addressable": "Replaceable events with unique identifiers",
+      "ephemeral": "Temporary events not stored long-term"
+    },
+    "common_tags": {
+      "e": "Reference to another event (hex event ID)",
+      "p": "Reference to a pubkey (hex public key)",
+      "d": "Unique identifier for addressable events",
+      "t": "Hashtag or topic",
+      "r": "URL reference"
+    }
+  },
+  "eventKinds": [
+    {
+      "kind": 0,
+      "name": "User Metadata",
+      "description": "Replaceable event containing user profile metadata as a stringified JSON object with name, about, and picture fields.",
+      "nip": "NIP-01",
+      "category": "replaceable",
+      "summary": "User profile data (name, bio, picture) stored as JSON in content",
+      "useCases": [
+        "Setting up user profile",
+        "Updating profile information",
+        "Displaying user cards in clients"
+      ],
+      "implementationNotes": [
+        "Content must be valid JSON",
+        "This event type is replaceable - newer events override older ones",
+        "Profile data is public and cached by relays",
+        "Standard fields: name, about, picture, nip05, website, banner"
+      ],
+      "commonGotchas": [
+        "Forgetting to JSON.stringify the profile object",
+        "Including private data in public profile",
+        "Not validating JSON structure before publishing"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "json",
+        "description": "JSON object with profile fields",
+        "examples": [
+          "{\"name\":\"Alice\",\"about\":\"Bitcoin enthusiast\",\"picture\":\"https://example.com/alice.jpg\"}",
+          "{\"name\":\"Bob\",\"about\":\"Nostr developer\",\"website\":\"https://bob.dev\",\"nip05\":\"bob@example.com\"}"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Basic Profile Update",
+        "description": "Update user profile with NDK",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst profileData = {\n  name: \"Alice\",\n  about: \"Bitcoin enthusiast\", \n  picture: \"https://example.com/alice.jpg\"\n}\n\nconst event = new NDKEvent(ndk, {\n  kind: 0,\n  content: JSON.stringify(profileData),\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [3, 10002]
+    },
+    {
+      "kind": 1,
+      "name": "Short Text Note",
+      "description": "Regular event representing the fundamental building block of Nostr, containing short-form text content like social media posts.",
+      "nip": "NIP-01",
+      "category": "regular",
+      "summary": "Basic text post - the main content type on Nostr",
+      "useCases": [
+        "Social media posts",
+        "Status updates",
+        "Short messages and thoughts",
+        "Replies to other notes"
+      ],
+      "implementationNotes": [
+        "Content is plain text (supports mentions and hashtags)",
+        "Use e tags to reference other events (replies)",
+        "Use p tags to mention users",
+        "Use t tags for hashtags"
+      ],
+      "commonGotchas": [
+        "Not including proper e/p tags for replies",
+        "Exceeding reasonable length limits (varies by client)",
+        "Forgetting to handle mentions and hashtags properly"
+      ],
+      "requiredTags": [],
+      "optionalTags": [
+        {
+          "name": "e",
+          "description": "Reference to another event (for replies/mentions)",
+          "format": "hex event id",
+          "examples": ["e", "abc123...", "wss://relay.example.com"]
+        },
+        {
+          "name": "p",
+          "description": "Mention of a pubkey",
+          "format": "hex pubkey",
+          "examples": ["p", "def456..."]
+        },
+        {
+          "name": "t",
+          "description": "Hashtag",
+          "format": "lowercase string",
+          "examples": ["t", "bitcoin"], ["t", "nostr"]
+        }
+      ],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content with optional nostr: references",
+        "examples": [
+          "Hello Nostr! 👋",
+          "GM everyone! #nostr #bitcoin",
+          "Great post! nostr:note1abc123..."
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Basic Text Note",
+        "description": "Publish a simple text note",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1,\n  content: \"Hello Nostr! 👋\",\n  tags: [\n    ['t', 'nostr'],\n    ['t', 'introduction']\n  ]\n})\n\nawait event.publish()"
+      },
+      "advancedExamples": [
+        {
+          "library": "ndk",
+          "title": "Reply with Mentions",
+          "description": "Reply to an event with user mentions",
+          "code": "const replyEvent = new NDKEvent(ndk, {\n  kind: 1,\n  content: \"Great point! Thanks for sharing nostr:npub1abc...\",\n  tags: [\n    ['e', originalEventId, 'wss://relay.damus.io', 'reply'],\n    ['p', originalAuthorPubkey],\n    ['p', mentionedUserPubkey]\n  ]\n})\n\nawait replyEvent.publish()"
+        }
+      ],
+      "relatedKinds": [6, 7, 16]
+    },
+    {
+      "kind": 3,
+      "name": "Follows",
+      "description": "Replaceable contact list event containing p tags for followed pubkeys with optional relay hints and local petnames.",
+      "nip": "NIP-02",
+      "category": "replaceable",
+      "summary": "User's follow list - who they follow on Nostr",
+      "useCases": [
+        "Managing follow list",
+        "Social graph discovery",
+        "Feed curation",
+        "Contact list backup"
+      ],
+      "implementationNotes": [
+        "Each followed user gets a p tag: [\"p\", pubkey, relay, petname]",
+        "Content typically empty or contains additional metadata",
+        "Replaceable event - newer versions override older ones",
+        "Relay hints help with discovery"
+      ],
+      "commonGotchas": [
+        "Not including relay hints (reduces discoverability)",
+        "Malformed p tag structure",
+        "Including private information in petnames"
+      ],
+      "requiredTags": [
+        {
+          "name": "p",
+          "description": "Followed pubkey with optional relay and petname",
+          "format": "[\"p\", \"hex_pubkey\", \"relay_url\", \"petname\"]",
+          "examples": [
+            "[\"p\", \"abc123...\", \"wss://relay.damus.io\", \"alice\"]",
+            "[\"p\", \"def456...\", \"\", \"bob\"]"
+          ]
+        }
+      ],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, may contain additional metadata"
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Update Follow List",
+        "description": "Manage your follow list with NDK",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst followList = [\n  ['p', 'abc123...', 'wss://relay.damus.io', 'alice'],\n  ['p', 'def456...', 'wss://nos.lol', 'bob']\n]\n\nconst event = new NDKEvent(ndk, {\n  kind: 3,\n  content: \"\",\n  tags: followList\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [0, 10000, 10002]
+    },
+    {
+      "kind": 7,
+      "name": "Reaction",
+      "description": "Reaction event with content \"+\" for like, \"-\" for dislike, or emoji, targeting another event via e and p tags.",
+      "nip": "NIP-25",
+      "category": "regular",
+      "summary": "Like, dislike, or emoji reaction to events",
+      "useCases": [
+        "Liking posts (+ or empty content)",
+        "Disliking posts (- content)",
+        "Emoji reactions (🔥, ❤️, etc.)",
+        "Engagement metrics"
+      ],
+      "implementationNotes": [
+        "Content: \"+\" or empty = like, \"-\" = dislike, emoji = custom reaction",
+        "Must include e tag referencing target event",
+        "Should include p tag for event author",
+        "k tag indicates kind of event being reacted to"
+      ],
+      "commonGotchas": [
+        "Missing required e and p tags",
+        "Not handling duplicate reactions properly",
+        "Using non-standard reaction content formats"
+      ],
+      "requiredTags": [
+        {
+          "name": "e",
+          "description": "Event being reacted to",
+          "format": "hex event id with optional relay hint",
+          "examples": ["e", "abc123...", "wss://relay.damus.io"]
+        },
+        {
+          "name": "p",
+          "description": "Pubkey of event author being reacted to",
+          "format": "hex pubkey",
+          "examples": ["p", "def456..."]
+        }
+      ],
+      "optionalTags": [
+        {
+          "name": "k",
+          "description": "Kind of event being reacted to",
+          "format": "event kind number as string",
+          "examples": ["k", "1"]
+        }
+      ],
+      "contentSchema": {
+        "type": "text",
+        "description": "Reaction indicator: \"+\", \"-\", or emoji",
+        "examples": ["+", "-", "🔥", "❤️", "🚀", "👍"]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Like a Post",
+        "description": "React to an event with a like",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 7,\n  content: \"+\", // Like reaction\n  tags: [\n    ['e', targetEventId, 'wss://relay.damus.io'],\n    ['p', targetAuthorPubkey],\n    ['k', '1'] // Reacting to a text note\n  ]\n})\n\nawait event.publish()"
+      },
+      "advancedExamples": [
+        {
+          "library": "ndk",
+          "title": "Custom Emoji Reaction",
+          "description": "React with custom emoji",
+          "code": "const reactionEvent = new NDKEvent(ndk, {\n  kind: 7,\n  content: \"🔥\", // Fire emoji reaction\n  tags: [\n    ['e', targetEventId],\n    ['p', targetAuthorPubkey],\n    ['k', '1']\n  ]\n})\n\nawait reactionEvent.publish()"
+        }
+      ],
+      "relatedKinds": [1, 6, 16]
+    },
+    {
+      "kind": 30023,
+      "name": "Long-form Content",
+      "description": "Addressable event for long-form Markdown content like articles and blog posts with optional metadata tags.",
+      "nip": "NIP-23",
+      "category": "addressable",
+      "summary": "Long-form articles and blog posts with Markdown support",
+      "useCases": [
+        "Blog posts and articles",
+        "Documentation and guides",
+        "Long-form content publishing",
+        "Censorship-resistant publishing"
+      ],
+      "implementationNotes": [
+        "Content is Markdown formatted text",
+        "d tag provides unique identifier for replaceability",
+        "title, published_at, and summary tags provide metadata",
+        "Addressable via coordinate: kind:pubkey:identifier",
+        "Supports image, hashtag, and reference tags"
+      ],
+      "commonGotchas": [
+        "Missing required d tag identifier",
+        "Not handling Markdown rendering properly",
+        "Forgetting to set published_at timestamp",
+        "Overwriting articles with same d tag accidentally"
+      ],
+      "requiredTags": [
+        {
+          "name": "d",
+          "description": "Unique identifier for this article (enables replaceability)",
+          "format": "unique string identifier",
+          "examples": ["d", "my-first-article"], ["d", "bitcoin-guide-2024"]
+        }
+      ],
+      "optionalTags": [
+        {
+          "name": "title",
+          "description": "Article title",
+          "format": "text string",
+          "examples": ["title", "My First Nostr Article"]
+        },
+        {
+          "name": "published_at",
+          "description": "Publication timestamp",
+          "format": "unix timestamp as string",
+          "examples": ["published_at", "1703980800"]
+        },
+        {
+          "name": "summary",
+          "description": "Article summary/description",
+          "format": "text string",
+          "examples": ["summary", "An introduction to Nostr development"]
+        },
+        {
+          "name": "image",
+          "description": "Cover image URL",
+          "format": "URL string",
+          "examples": ["image", "https://example.com/cover.jpg"]
+        },
+        {
+          "name": "t",
+          "description": "Hashtag/topic",
+          "format": "lowercase string",
+          "examples": ["t", "nostr"], ["t", "bitcoin"]
+        }
+      ],
+      "contentSchema": {
+        "type": "text",
+        "description": "Markdown formatted long-form content",
+        "examples": [
+          "# My Article\n\nThis is **bold** text with [links](https://example.com).",
+          "## Introduction\n\nLong-form content on Nostr enables censorship-resistant publishing.\n\n### Features\n\n- Markdown support\n- Addressable events\n- Rich metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Publish Article",
+        "description": "Publish a long-form article with metadata",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst articleContent = `# My First Nostr Article\n\nThis is a **long-form article** published on Nostr using kind 30023.\n\n## Features\n\n- Markdown formatting\n- Addressable events  \n- Rich metadata support\n\nYou can reference other events: nostr:note1abc123...`\n\nconst event = new NDKEvent(ndk, {\n  kind: 30023,\n  content: articleContent,\n  tags: [\n    ['d', 'my-first-article-' + Date.now()], // Required unique ID\n    ['title', 'My First Nostr Article'],\n    ['published_at', Math.floor(Date.now() / 1000).toString()],\n    ['summary', 'Introduction to long-form content on Nostr'],\n    ['t', 'nostr'],\n    ['t', 'article']\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [1, 30024]
+    }
+  ],
+  "implementationGuides": {
+    "gettingStarted": {
+      "title": "Quick Start Guide for AI Agents",
+      "steps": [
+        "1. Import the appropriate Nostr library (NDK recommended)",
+        "2. Set up relay connections and signer",
+        "3. Choose the correct event kind for your use case",
+        "4. Structure the event with required tags and content",
+        "5. Validate the event structure before publishing",
+        "6. Handle errors and edge cases"
+      ]
+    },
+    "commonPatterns": {
+      "creating_events": "Always validate required tags and content schema before publishing",
+      "handling_replies": "Include proper e and p tags when replying to events",
+      "addressable_events": "Use unique d tag identifiers for replaceable content",
+      "reactions": "Include both e (target event) and p (author) tags for reactions"
+    },
+    "validation_rules": {
+      "json_content": "Validate JSON.parse() for kinds that require JSON content (kind 0)",
+      "required_tags": "Check that all required tags are present before publishing",
+      "tag_format": "Ensure tags follow the correct format: [name, value, ...extras]",
+      "content_limits": "Be aware of reasonable content length limits for different event kinds"
+    }
+  },
+  "troubleshooting": {
+    "common_errors": {
+      "invalid_json": "For kind 0 (profiles), ensure content is valid JSON",
+      "missing_tags": "Check that required tags (e.g., 'd' for addressable events) are included",
+      "malformed_tags": "Tags must be arrays with string elements",
+      "signature_failures": "Ensure signer is properly configured and connected"
+    },
+    "debugging_tips": [
+      "Use validateEventStructure() to check event format before publishing",
+      "Test with known-good relays first (wss://relay.damus.io, wss://nos.lol)",
+      "Check network connectivity and relay response times",
+      "Verify event signatures and timestamps are correct"
+    ]
+  }
+}
