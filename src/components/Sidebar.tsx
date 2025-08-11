@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EventKind } from '@/types';
 import { searchEventKinds } from '@/lib/eventData';
+import { ExternalLink } from 'lucide-react';
 
 interface SidebarProps {
   selectedKind: number | null;
@@ -29,6 +30,26 @@ export function Sidebar({ selectedKind, onKindSelect, searchQuery }: SidebarProp
   return (
     <div className="flex-1 overflow-y-auto min-h-0">
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        {/* Report Menu Item */}
+        <div className="p-3 border-b-2 border-gray-300 dark:border-gray-600">
+          <a
+            href="https://github.com/nostrocket/nostr.dev/issues/new"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between w-full hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                Report an issue or suggest a feature
+              </span>
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-500 text-white">
+                new
+              </span>
+            </div>
+            <ExternalLink className="h-4 w-4 text-gray-400" />
+          </a>
+        </div>
+        
         {eventKinds.map((kind) => (
           <div
             key={kind.kind}
