@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build && next export"
+    "export": "next build && next export",
+    "generate-ai-docs": "node scripts/generate-ai-docs.js"
   },
   "dependencies": {
     "@nostr-dev-kit/ndk": "^2.14.33",
@@ -29,6 +30,7 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "15.4.6",
     "postcss": "^8.5.5",
-    "tailwindcss": "^3.4.16"
+    "tailwindcss": "^3.4.16",
+    "ts-node": "^10.9.2"
   }
 }

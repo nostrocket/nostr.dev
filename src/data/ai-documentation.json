@@ -3,39 +3,23 @@
     "title": "AI-Optimized Nostr Event Reference",
     "description": "Comprehensive machine-readable reference for AI agents to understand and implement Nostr event kinds",
     "version": "1.0.0",
-    "generated": "2024-01-01T00:00:00.000Z",
-    "totalEventKinds": 5
-  },
-  "quickReference": {
-    "basic_events": {
-      "0": "User profile metadata (JSON)",
-      "1": "Text notes and posts",
-      "3": "Follow lists (contact lists)",
-      "7": "Reactions (likes, dislikes, emojis)",
-      "30023": "Long-form articles (Markdown)"
-    },
-    "categories": {
-      "regular": "Normal events that can be replaced by newer ones",
-      "replaceable": "Latest event of this kind replaces older ones",
-      "addressable": "Replaceable events with unique identifiers",
-      "ephemeral": "Temporary events not stored long-term"
-    },
-    "common_tags": {
-      "e": "Reference to another event (hex event ID)",
-      "p": "Reference to a pubkey (hex public key)",
-      "d": "Unique identifier for addressable events",
-      "t": "Hashtag or topic",
-      "r": "URL reference"
+    "generated": "2025-08-11T07:05:01.112Z",
+    "totalEventKinds": 71,
+    "categoryBreakdown": {
+      "regular": 40,
+      "replaceable": 13,
+      "addressable": 18,
+      "ephemeral": 0
     }
   },
-  "eventKinds": [
+  "eventReference": [
     {
       "kind": 0,
       "name": "User Metadata",
       "description": "Replaceable event containing user profile metadata as a stringified JSON object with name, about, and picture fields.",
+      "summary": "User profile data (name, bio, picture) stored as JSON in content",
       "nip": "NIP-01",
       "category": "replaceable",
-      "summary": "User profile data (name, bio, picture) stored as JSON in content",
       "useCases": [
         "Setting up user profile",
         "Updating profile information",
@@ -68,15 +52,18 @@
         "description": "Update user profile with NDK",
         "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst profileData = {\n  name: \"Alice\",\n  about: \"Bitcoin enthusiast\", \n  picture: \"https://example.com/alice.jpg\"\n}\n\nconst event = new NDKEvent(ndk, {\n  kind: 0,\n  content: JSON.stringify(profileData),\n  tags: []\n})\n\nawait event.publish()"
       },
-      "relatedKinds": [3, 10002]
+      "relatedKinds": [
+        3,
+        10002
+      ]
     },
     {
       "kind": 1,
       "name": "Short Text Note",
       "description": "Regular event representing the fundamental building block of Nostr, containing short-form text content like social media posts.",
+      "summary": "Basic text post - the main content type on Nostr",
       "nip": "NIP-01",
       "category": "regular",
-      "summary": "Basic text post - the main content type on Nostr",
       "useCases": [
         "Social media posts",
         "Status updates",
@@ -100,19 +87,26 @@
           "name": "e",
           "description": "Reference to another event (for replies/mentions)",
           "format": "hex event id",
-          "examples": ["e", "abc123...", "wss://relay.example.com"]
+          "examples": [
+            "[\"e\", \"abc123...\", \"wss://relay.example.com\"]"
+          ]
         },
         {
           "name": "p",
           "description": "Mention of a pubkey",
           "format": "hex pubkey",
-          "examples": ["p", "def456..."]
+          "examples": [
+            "[\"p\", \"def456...\"]"
+          ]
         },
         {
           "name": "t",
           "description": "Hashtag",
           "format": "lowercase string",
-          "examples": ["t", "bitcoin"], ["t", "nostr"]
+          "examples": [
+            "[\"t\", \"bitcoin\"]",
+            "[\"t\", \"nostr\"]"
+          ]
         }
       ],
       "contentSchema": {
@@ -138,15 +132,61 @@
           "code": "const replyEvent = new NDKEvent(ndk, {\n  kind: 1,\n  content: \"Great point! Thanks for sharing nostr:npub1abc...\",\n  tags: [\n    ['e', originalEventId, 'wss://relay.damus.io', 'reply'],\n    ['p', originalAuthorPubkey],\n    ['p', mentionedUserPubkey]\n  ]\n})\n\nawait replyEvent.publish()"
         }
       ],
-      "relatedKinds": [6, 7, 16]
+      "relatedKinds": [
+        6,
+        7,
+        16
+      ]
+    },
+    {
+      "kind": 2,
+      "name": "Recommend Relay",
+      "description": "Deprecated event type that was used to recommend relay servers to other users.",
+      "summary": "Deprecated recommend relay event",
+      "nip": "NIP-01",
+      "category": "regular",
+      "useCases": [
+        "Recommend Relay functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "⚠️ This event type is deprecated - avoid using in new applications"
+      ],
+      "commonGotchas": [
+        "Using deprecated event types in new applications",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Recommend Relay content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Recommend Relay",
+        "description": "Example of creating a Recommend Relay event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 2,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
     },
     {
       "kind": 3,
       "name": "Follows",
       "description": "Replaceable contact list event containing p tags for followed pubkeys with optional relay hints and local petnames.",
+      "summary": "User's follow list - who they follow on Nostr",
       "nip": "NIP-02",
       "category": "replaceable",
-      "summary": "User's follow list - who they follow on Nostr",
       "useCases": [
         "Managing follow list",
         "Social graph discovery",
@@ -186,15 +226,186 @@
         "description": "Manage your follow list with NDK",
         "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst followList = [\n  ['p', 'abc123...', 'wss://relay.damus.io', 'alice'],\n  ['p', 'def456...', 'wss://nos.lol', 'bob']\n]\n\nconst event = new NDKEvent(ndk, {\n  kind: 3,\n  content: \"\",\n  tags: followList\n})\n\nawait event.publish()"
       },
-      "relatedKinds": [0, 10000, 10002]
+      "relatedKinds": [
+        0,
+        10000,
+        10002
+      ]
+    },
+    {
+      "kind": 4,
+      "name": "Encrypted Direct Messages",
+      "description": "Deprecated encrypted direct message event using shared secret encryption between sender and recipient pubkeys.",
+      "summary": "Deprecated encrypted direct messages event",
+      "nip": "NIP-04",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "Content is encrypted for privacy",
+        "Requires proper key management",
+        "Required tags: p",
+        "⚠️ This event type is deprecated - avoid using in new applications"
+      ],
+      "commonGotchas": [
+        "Using deprecated event types in new applications",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [
+        {
+          "name": "p",
+          "description": "recipient pubkey",
+          "format": "hex pubkey",
+          "examples": [
+            "[\"p\", \"pubkey123...\"]"
+          ]
+        }
+      ],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "encrypted",
+        "description": "Encrypted content for privacy",
+        "examples": [
+          "<encrypted-data>"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Encrypted Direct Messages",
+        "description": "Example of creating a Encrypted Direct Messages event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 4,\n  content: \"Hello from Encrypted Direct Messages!\",\n  tags: [\\n    ['p', 'target-pubkey']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        14
+      ]
+    },
+    {
+      "kind": 5,
+      "name": "Event Deletion Request",
+      "description": "Event requesting deletion of previously published events by specifying their IDs in e tags.",
+      "summary": "Event requesting deletion of previously published events ...",
+      "nip": "NIP-09",
+      "category": "regular",
+      "useCases": [
+        "Event Deletion Request functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Required tags: e"
+      ],
+      "commonGotchas": [
+        "Malformed tag structure or missing required tags",
+        "Incorrect tag ordering or format",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [
+        {
+          "name": "e",
+          "description": "event id to delete",
+          "format": "hex event id",
+          "examples": [
+            "[\"e\", \"abc123...\"]",
+            "[\"e\", \"def456...\", \"wss://relay.example.com\"]"
+          ]
+        }
+      ],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Event Deletion Request content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Event Deletion Request",
+        "description": "Example of creating a Event Deletion Request event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 5,\n  content: \"\",\n  tags: [\\n    ['e', 'target-event-id']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 6,
+      "name": "Repost",
+      "description": "Event that reposts another event by including the original event JSON in content and referencing it with e and p tags.",
+      "summary": "Event that reposts another event by including the origina...",
+      "nip": "NIP-18",
+      "category": "regular",
+      "useCases": [
+        "Repost functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Content must be valid JSON",
+        "Validate JSON.parse() before publishing",
+        "Required tags: e, p"
+      ],
+      "commonGotchas": [
+        "Invalid JSON syntax causing parsing errors",
+        "Not properly escaping JSON content",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [
+        {
+          "name": "e",
+          "description": "event being reposted",
+          "format": "hex event id",
+          "examples": [
+            "[\"e\", \"abc123...\"]",
+            "[\"e\", \"def456...\", \"wss://relay.example.com\"]"
+          ]
+        },
+        {
+          "name": "p",
+          "description": "pubkey of reposted event",
+          "format": "hex pubkey",
+          "examples": [
+            "[\"p\", \"pubkey123...\"]"
+          ]
+        }
+      ],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "json",
+        "description": "JSON object with structured data",
+        "examples": [
+          "{\"key\": \"value\"}",
+          "{\"name\": \"Alice\", \"about\": \"Developer\"}"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Repost",
+        "description": "Example of creating a Repost event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 6,\n  content: JSON.stringify({name: \"Alice\", about: \"Nostr user\"}),\n  tags: [\\n    ['e', 'target-event-id'],\\n    ['p', 'target-pubkey']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
     },
     {
       "kind": 7,
       "name": "Reaction",
       "description": "Reaction event with content \"+\" for like, \"-\" for dislike, or emoji, targeting another event via e and p tags.",
+      "summary": "Like, dislike, or emoji reaction to events",
       "nip": "NIP-25",
       "category": "regular",
-      "summary": "Like, dislike, or emoji reaction to events",
       "useCases": [
         "Liking posts (+ or empty content)",
         "Disliking posts (- content)",
@@ -217,13 +428,17 @@
           "name": "e",
           "description": "Event being reacted to",
           "format": "hex event id with optional relay hint",
-          "examples": ["e", "abc123...", "wss://relay.damus.io"]
+          "examples": [
+            "[\"e\", \"abc123...\", \"wss://relay.damus.io\"]"
+          ]
         },
         {
           "name": "p",
           "description": "Pubkey of event author being reacted to",
           "format": "hex pubkey",
-          "examples": ["p", "def456..."]
+          "examples": [
+            "[\"p\", \"def456...\"]"
+          ]
         }
       ],
       "optionalTags": [
@@ -231,13 +446,22 @@
           "name": "k",
           "description": "Kind of event being reacted to",
           "format": "event kind number as string",
-          "examples": ["k", "1"]
+          "examples": [
+            "[\"k\", \"1\"]"
+          ]
         }
       ],
       "contentSchema": {
         "type": "text",
         "description": "Reaction indicator: \"+\", \"-\", or emoji",
-        "examples": ["+", "-", "🔥", "❤️", "🚀", "👍"]
+        "examples": [
+          "+",
+          "-",
+          "🔥",
+          "❤️",
+          "🚀",
+          "👍"
+        ]
       },
       "basicExample": {
         "library": "ndk",
@@ -253,15 +477,1935 @@
           "code": "const reactionEvent = new NDKEvent(ndk, {\n  kind: 7,\n  content: \"🔥\", // Fire emoji reaction\n  tags: [\n    ['e', targetEventId],\n    ['p', targetAuthorPubkey],\n    ['k', '1']\n  ]\n})\n\nawait reactionEvent.publish()"
         }
       ],
-      "relatedKinds": [1, 6, 16]
+      "relatedKinds": [
+        1,
+        6,
+        16
+      ]
+    },
+    {
+      "kind": 8,
+      "name": "Badge Award",
+      "description": "Event awarding a badge to a pubkey, referencing the badge definition and recipient.",
+      "summary": "Event awarding a badge to a pubkey, referencing the badge...",
+      "nip": "NIP-58",
+      "category": "regular",
+      "useCases": [
+        "Recognition systems",
+        "Achievements",
+        "Community rewards"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-58 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Badge Award content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Badge Award",
+        "description": "Example of creating a Badge Award event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 8,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 9,
+      "name": "Chat Message",
+      "description": "Message sent to a group chat with moderation and access control managed by group admins.",
+      "summary": "Chat Message for messaging",
+      "nip": "NIP-29",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-29 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Chat Message content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Chat Message",
+        "description": "Example of creating a Chat Message event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 9,\n  content: \"Hello from Chat Message!\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        4,
+        14
+      ]
+    },
+    {
+      "kind": 10,
+      "name": "Group Chat Threaded Reply",
+      "description": "Group chat threaded reply (deprecated)",
+      "summary": "Group chat threaded reply (deprecated)",
+      "nip": "NIP-29",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "⚠️ This event type is deprecated - avoid using in new applications"
+      ],
+      "commonGotchas": [
+        "Using deprecated event types in new applications",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Group Chat Threaded Reply content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Group Chat Threaded Reply",
+        "description": "Example of creating a Group Chat Threaded Reply event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 11,
+      "name": "Thread",
+      "description": "Thread response",
+      "summary": "Thread response",
+      "nip": "NIP-10",
+      "category": "regular",
+      "useCases": [
+        "Thread functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-10 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Thread content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Thread",
+        "description": "Example of creating a Thread event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 11,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 12,
+      "name": "Group Thread Reply",
+      "description": "Group thread reply (deprecated)",
+      "summary": "Group thread reply (deprecated)",
+      "nip": "NIP-29",
+      "category": "regular",
+      "useCases": [
+        "Group Thread Reply functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "⚠️ This event type is deprecated - avoid using in new applications"
+      ],
+      "commonGotchas": [
+        "Using deprecated event types in new applications",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Group Thread Reply content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Group Thread Reply",
+        "description": "Example of creating a Group Thread Reply event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 12,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 13,
+      "name": "Seal",
+      "description": "Sealed event containing encrypted content as part of the gift wrap private messaging protocol.",
+      "summary": "Sealed event containing encrypted content as part of the ...",
+      "nip": "NIP-59",
+      "category": "regular",
+      "useCases": [
+        "Seal functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Content is encrypted for privacy",
+        "Requires proper key management"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "encrypted",
+        "description": "Encrypted content for privacy",
+        "examples": [
+          "<encrypted-data>"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Seal",
+        "description": "Example of creating a Seal event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 13,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 14,
+      "name": "Direct Message",
+      "description": "Private direct message event using the gift wrap protocol with enhanced privacy and metadata protection.",
+      "summary": "Direct Message for messaging",
+      "nip": "NIP-17",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-17 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Direct Message content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Direct Message",
+        "description": "Example of creating a Direct Message event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 14,\n  content: \"Hello from Direct Message!\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        4
+      ]
+    },
+    {
+      "kind": 15,
+      "name": "File Message",
+      "description": "File message",
+      "summary": "File message",
+      "nip": "NIP-17",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-17 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "File Message content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create File Message",
+        "description": "Example of creating a File Message event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 15,\n  content: \"Hello from File Message!\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        4,
+        14
+      ]
+    },
+    {
+      "kind": 16,
+      "name": "Generic Repost",
+      "description": "Generic repost event that can reference any kind of event with optional additional commentary.",
+      "summary": "Generic repost event that can reference any kind of event...",
+      "nip": "NIP-18",
+      "category": "regular",
+      "useCases": [
+        "Generic Repost functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-18 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Generic Repost content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Generic Repost",
+        "description": "Example of creating a Generic Repost event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 16,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 17,
+      "name": "Reaction to Website",
+      "description": "Reaction to a website",
+      "summary": "Reaction to a website",
+      "nip": "NIP-25",
+      "category": "regular",
+      "useCases": [
+        "Social engagement",
+        "Content feedback",
+        "User interaction"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-25 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Reaction to Website content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Reaction to Website",
+        "description": "Example of creating a Reaction to Website event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 17,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 20,
+      "name": "Picture",
+      "description": "Picture event",
+      "summary": "Picture event",
+      "nip": "NIP-68",
+      "category": "regular",
+      "useCases": [
+        "Picture functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-68 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Picture content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Picture",
+        "description": "Example of creating a Picture event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 20,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 21,
+      "name": "Video Event",
+      "description": "Event containing video content metadata including URL, thumbnail, duration, and other video properties.",
+      "summary": "Event containing video content metadata including URL, th...",
+      "nip": "NIP-71",
+      "category": "regular",
+      "useCases": [
+        "Video Event functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-71 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Video Event content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Video Event",
+        "description": "Example of creating a Video Event event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 21,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 22,
+      "name": "Short-form Portrait Video",
+      "description": "Short-form portrait video event",
+      "summary": "Short-form portrait video event",
+      "nip": "NIP-71",
+      "category": "regular",
+      "useCases": [
+        "Short-form Portrait Video functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-71 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Short-form Portrait Video content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Short-form Portrait Video",
+        "description": "Example of creating a Short-form Portrait Video event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 22,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 30,
+      "name": "Internal Reference",
+      "description": "Internal reference",
+      "summary": "Internal reference",
+      "nip": "NKBIP-03",
+      "category": "regular",
+      "useCases": [
+        "Internal Reference functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NKBIP-03 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Internal Reference content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Internal Reference",
+        "description": "Example of creating a Internal Reference event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 31,
+      "name": "External Web Reference",
+      "description": "External web reference",
+      "summary": "External web reference",
+      "nip": "NKBIP-03",
+      "category": "regular",
+      "useCases": [
+        "External Web Reference functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NKBIP-03 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "External Web Reference content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create External Web Reference",
+        "description": "Example of creating a External Web Reference event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 31,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 32,
+      "name": "Hardcopy Reference",
+      "description": "Hardcopy reference",
+      "summary": "Hardcopy reference",
+      "nip": "NKBIP-03",
+      "category": "regular",
+      "useCases": [
+        "Hardcopy Reference functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NKBIP-03 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Hardcopy Reference content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Hardcopy Reference",
+        "description": "Example of creating a Hardcopy Reference event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 32,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 33,
+      "name": "Prompt Reference",
+      "description": "Prompt reference",
+      "summary": "Prompt reference",
+      "nip": "NKBIP-03",
+      "category": "regular",
+      "useCases": [
+        "Prompt Reference functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NKBIP-03 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Prompt Reference content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Prompt Reference",
+        "description": "Example of creating a Prompt Reference event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 33,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 40,
+      "name": "Channel Creation",
+      "description": "Event that creates a new public channel with metadata like name, about, and picture.",
+      "summary": "Event that creates a new public channel with metadata lik...",
+      "nip": "NIP-28",
+      "category": "regular",
+      "useCases": [
+        "Channel Creation functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-28 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Channel Creation content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Channel Creation",
+        "description": "Example of creating a Channel Creation event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 40,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 41,
+      "name": "Channel Metadata",
+      "description": "Channel metadata update",
+      "summary": "Channel metadata update",
+      "nip": "NIP-28",
+      "category": "regular",
+      "useCases": [
+        "User profile management",
+        "Identity verification",
+        "Social discovery"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-28 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Channel Metadata content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Channel Metadata",
+        "description": "Example of creating a Channel Metadata event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 41,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        3
+      ]
+    },
+    {
+      "kind": 42,
+      "name": "Channel Message",
+      "description": "Message posted to a public channel, referencing the channel creation event.",
+      "summary": "Channel Message for messaging",
+      "nip": "NIP-28",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-28 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Channel Message content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Channel Message",
+        "description": "Example of creating a Channel Message event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 42,\n  content: \"Hello from Channel Message!\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        4,
+        14
+      ]
+    },
+    {
+      "kind": 43,
+      "name": "Channel Hide Message",
+      "description": "Hide message in channel",
+      "summary": "Hide message in channel",
+      "nip": "NIP-28",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-28 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Channel Hide Message content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Channel Hide Message",
+        "description": "Example of creating a Channel Hide Message event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 43,\n  content: \"Hello from Channel Hide Message!\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        4,
+        14
+      ]
+    },
+    {
+      "kind": 44,
+      "name": "Channel Mute User",
+      "description": "Mute user in channel",
+      "summary": "Mute user in channel",
+      "nip": "NIP-28",
+      "category": "regular",
+      "useCases": [
+        "Channel Mute User functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-28 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Channel Mute User content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Channel Mute User",
+        "description": "Example of creating a Channel Mute User event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 44,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 818,
+      "name": "Merge Requests",
+      "description": "Merge requests",
+      "summary": "Merge requests",
+      "nip": "NIP-54",
+      "category": "regular",
+      "useCases": [
+        "Merge Requests functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-54 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Merge Requests content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Merge Requests",
+        "description": "Example of creating a Merge Requests event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 818,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 1018,
+      "name": "Poll Response",
+      "description": "Poll response",
+      "summary": "Poll response",
+      "nip": "NIP-69",
+      "category": "regular",
+      "useCases": [
+        "Poll Response functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-69 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Poll Response content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Poll Response",
+        "description": "Example of creating a Poll Response event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1018,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 1063,
+      "name": "File Metadata",
+      "description": "Event containing metadata about a file including URL, hash, MIME type, and other descriptive information.",
+      "summary": "Event containing metadata about a file including URL, has...",
+      "nip": "NIP-94",
+      "category": "regular",
+      "useCases": [
+        "User profile management",
+        "Identity verification",
+        "Social discovery"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-94 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "File Metadata content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create File Metadata",
+        "description": "Example of creating a File Metadata event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1063,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        3
+      ]
+    },
+    {
+      "kind": 1311,
+      "name": "Live Chat Message",
+      "description": "Chat message posted to a live event or streaming session with real-time interaction capabilities.",
+      "summary": "Live Chat Message for messaging",
+      "nip": "NIP-53",
+      "category": "regular",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-53 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Live Chat Message content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Live Chat Message",
+        "description": "Example of creating a Live Chat Message event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1311,\n  content: \"Hello from Live Chat Message!\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        4,
+        14
+      ]
+    },
+    {
+      "kind": 1617,
+      "name": "Patches",
+      "description": "Patches",
+      "summary": "Patches",
+      "nip": "NIP-34",
+      "category": "regular",
+      "useCases": [
+        "Patches functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-34 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Patches content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Patches",
+        "description": "Example of creating a Patches event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1617,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 1621,
+      "name": "Issues",
+      "description": "Issues",
+      "summary": "Issues",
+      "nip": "NIP-34",
+      "category": "regular",
+      "useCases": [
+        "Issues functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-34 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Issues content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Issues",
+        "description": "Example of creating a Issues event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1621,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 1622,
+      "name": "Replies",
+      "description": "Replies",
+      "summary": "Replies",
+      "nip": "NIP-34",
+      "category": "regular",
+      "useCases": [
+        "Replies functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-34 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Replies content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Replies",
+        "description": "Example of creating a Replies event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1622,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 1971,
+      "name": "Problem Tracker",
+      "description": "Problem tracker",
+      "summary": "Problem tracker",
+      "nip": "NIP-1971",
+      "category": "regular",
+      "useCases": [
+        "Problem Tracker functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-1971 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Problem Tracker content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Problem Tracker",
+        "description": "Example of creating a Problem Tracker event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1971,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 1984,
+      "name": "Reporting",
+      "description": "Event for reporting content or users to relay operators with standardized report types and reasons.",
+      "summary": "Event for reporting content or users to relay operators w...",
+      "nip": "NIP-56",
+      "category": "regular",
+      "useCases": [
+        "Content moderation",
+        "Community safety",
+        "Abuse reporting"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-56 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Reporting content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Reporting",
+        "description": "Example of creating a Reporting event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1984,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 1985,
+      "name": "Label",
+      "description": "Event for labeling other events or entities with standardized or custom labels and namespaces.",
+      "summary": "Event for labeling other events or entities with standard...",
+      "nip": "NIP-32",
+      "category": "regular",
+      "useCases": [
+        "Label functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-32 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Label content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Label",
+        "description": "Example of creating a Label event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1985,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 9734,
+      "name": "Zap Request",
+      "description": "Lightning payment request event sent to LNURL callback containing recipient and optional message, not published to relays.",
+      "summary": "Zap Request for messaging",
+      "nip": "NIP-57",
+      "category": "regular",
+      "useCases": [
+        "Micropayments",
+        "Content monetization",
+        "Value for value"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-57 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Zap Request content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Zap Request",
+        "description": "Example of creating a Zap Request event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 9734,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 9735,
+      "name": "Zap",
+      "description": "Lightning payment receipt event created when a zap request invoice is paid, containing the original request and bolt11 invoice.",
+      "summary": "Lightning payment receipt event created when a zap reques...",
+      "nip": "NIP-57",
+      "category": "regular",
+      "useCases": [
+        "Micropayments",
+        "Content monetization",
+        "Value for value"
+      ],
+      "implementationNotes": [
+        "Implement according to NIP-57 specification",
+        "Follow standard Nostr event structure"
+      ],
+      "commonGotchas": [
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Zap content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Zap",
+        "description": "Example of creating a Zap event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 9735,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 10000,
+      "name": "Mute List",
+      "description": "Replaceable list of muted pubkeys and event IDs that the user wants to filter from their feeds.",
+      "summary": "Replaceable mute list event",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Mute List",
+        "description": "Example of creating a Mute List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10000,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10001,
+      "name": "Pin List",
+      "description": "Pin list",
+      "summary": "Pin list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Pin List",
+        "description": "Example of creating a Pin List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10001,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10002
+      ]
+    },
+    {
+      "kind": 10002,
+      "name": "Relay List Metadata",
+      "description": "Replaceable list defining which relays a user reads from and writes to, with read/write permissions.",
+      "summary": "Replaceable relay list metadata event",
+      "nip": "NIP-65",
+      "category": "replaceable",
+      "useCases": [
+        "User profile management",
+        "Identity verification",
+        "Social discovery"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Relay List Metadata",
+        "description": "Example of creating a Relay List Metadata event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10002,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        3
+      ]
+    },
+    {
+      "kind": 10003,
+      "name": "Bookmark List",
+      "description": "Bookmark list",
+      "summary": "Bookmark list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Bookmark List",
+        "description": "Example of creating a Bookmark List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10003,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10004,
+      "name": "Communities List",
+      "description": "Communities list",
+      "summary": "Communities list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Communities List",
+        "description": "Example of creating a Communities List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10004,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10005,
+      "name": "Public Chats List",
+      "description": "Public chats list",
+      "summary": "Public chats list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Private communication",
+        "Group discussions",
+        "Real-time messaging"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Public Chats List",
+        "description": "Example of creating a Public Chats List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10005,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10006,
+      "name": "Blocked Relays List",
+      "description": "Blocked relays list",
+      "summary": "Blocked relays list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Blocked Relays List",
+        "description": "Example of creating a Blocked Relays List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10006,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10007,
+      "name": "Search Relays List",
+      "description": "Search relays list",
+      "summary": "Search relays list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Search Relays List",
+        "description": "Example of creating a Search Relays List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10007,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10009,
+      "name": "User Groups List",
+      "description": "User groups list",
+      "summary": "User groups list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create User Groups List",
+        "description": "Example of creating a User Groups List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10009,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10015,
+      "name": "Interests List",
+      "description": "Interests list",
+      "summary": "Interests list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Interests List",
+        "description": "Example of creating a Interests List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10015,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 10030,
+      "name": "User Emoji List",
+      "description": "User emoji list",
+      "summary": "User emoji list",
+      "nip": "NIP-51",
+      "category": "replaceable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is a replaceable event - newer events override older ones",
+        "Only the most recent event of this kind per pubkey is kept"
+      ],
+      "commonGotchas": [
+        "Not understanding that newer events replace older ones",
+        "Publishing multiple events without intending replacement",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create User Emoji List",
+        "description": "Example of creating a User Emoji List event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 10030,\n  content: \"\",\n  tags: []\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 30000,
+      "name": "Categorized People",
+      "description": "Addressable list of pubkeys organized into custom categories defined by the d tag identifier.",
+      "summary": "Addressable categorized people event",
+      "nip": "NIP-51",
+      "category": "addressable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Malformed tag structure or missing required tags",
+        "Incorrect tag ordering or format"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Categorized People content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Categorized People",
+        "description": "Example of creating a Categorized People event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30000,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 30001,
+      "name": "Categorized Bookmarks",
+      "description": "Categorized bookmarks list",
+      "summary": "Categorized bookmarks list",
+      "nip": "NIP-51",
+      "category": "addressable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Categorized Bookmarks content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Categorized Bookmarks",
+        "description": "Example of creating a Categorized Bookmarks event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30001,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
     },
     {
       "kind": 30023,
       "name": "Long-form Content",
       "description": "Addressable event for long-form Markdown content like articles and blog posts with optional metadata tags.",
+      "summary": "Long-form articles and blog posts with Markdown support",
       "nip": "NIP-23",
       "category": "addressable",
-      "summary": "Long-form articles and blog posts with Markdown support",
       "useCases": [
         "Blog posts and articles",
         "Documentation and guides",
@@ -286,7 +2430,10 @@
           "name": "d",
           "description": "Unique identifier for this article (enables replaceability)",
           "format": "unique string identifier",
-          "examples": ["d", "my-first-article"], ["d", "bitcoin-guide-2024"]
+          "examples": [
+            "[\"d\", \"my-first-article\"]",
+            "[\"d\", \"bitcoin-guide-2024\"]"
+          ]
         }
       ],
       "optionalTags": [
@@ -294,31 +2441,42 @@
           "name": "title",
           "description": "Article title",
           "format": "text string",
-          "examples": ["title", "My First Nostr Article"]
+          "examples": [
+            "[\"title\", \"My First Nostr Article\"]"
+          ]
         },
         {
           "name": "published_at",
           "description": "Publication timestamp",
           "format": "unix timestamp as string",
-          "examples": ["published_at", "1703980800"]
+          "examples": [
+            "[\"published_at\", \"1703980800\"]"
+          ]
         },
         {
           "name": "summary",
           "description": "Article summary/description",
           "format": "text string",
-          "examples": ["summary", "An introduction to Nostr development"]
+          "examples": [
+            "[\"summary\", \"An introduction to Nostr development\"]"
+          ]
         },
         {
           "name": "image",
           "description": "Cover image URL",
           "format": "URL string",
-          "examples": ["image", "https://example.com/cover.jpg"]
+          "examples": [
+            "[\"image\", \"https://example.com/cover.jpg\"]"
+          ]
         },
         {
           "name": "t",
           "description": "Hashtag/topic",
           "format": "lowercase string",
-          "examples": ["t", "nostr"], ["t", "bitcoin"]
+          "examples": [
+            "[\"t\", \"nostr\"]",
+            "[\"t\", \"bitcoin\"]"
+          ]
         }
       ],
       "contentSchema": {
@@ -335,46 +2493,738 @@
         "description": "Publish a long-form article with metadata",
         "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst articleContent = `# My First Nostr Article\n\nThis is a **long-form article** published on Nostr using kind 30023.\n\n## Features\n\n- Markdown formatting\n- Addressable events  \n- Rich metadata support\n\nYou can reference other events: nostr:note1abc123...`\n\nconst event = new NDKEvent(ndk, {\n  kind: 30023,\n  content: articleContent,\n  tags: [\n    ['d', 'my-first-article-' + Date.now()], // Required unique ID\n    ['title', 'My First Nostr Article'],\n    ['published_at', Math.floor(Date.now() / 1000).toString()],\n    ['summary', 'Introduction to long-form content on Nostr'],\n    ['t', 'nostr'],\n    ['t', 'article']\n  ]\n})\n\nawait event.publish()"
       },
-      "relatedKinds": [1, 30024]
+      "relatedKinds": [
+        1,
+        30024
+      ]
+    },
+    {
+      "kind": 30024,
+      "name": "Draft Long-form Content",
+      "description": "Draft long-form content",
+      "summary": "Draft long-form content",
+      "nip": "NIP-23",
+      "category": "addressable",
+      "useCases": [
+        "Draft Long-form Content functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Draft Long-form Content content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Draft Long-form Content",
+        "description": "Example of creating a Draft Long-form Content event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30024,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 30078,
+      "name": "Application-specific Data",
+      "description": "Application-specific data",
+      "summary": "Application-specific data",
+      "nip": "NIP-78",
+      "category": "addressable",
+      "useCases": [
+        "Application-specific Data functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Application-specific Data content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Application-specific Data",
+        "description": "Example of creating a Application-specific Data event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30078,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 30315,
+      "name": "User Status",
+      "description": "User status",
+      "summary": "User status",
+      "nip": "NIP-315",
+      "category": "addressable",
+      "useCases": [
+        "User Status functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "User Status content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create User Status",
+        "description": "Example of creating a User Status event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30315,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 30402,
+      "name": "Classified Listing",
+      "description": "Classified listing",
+      "summary": "Classified listing",
+      "nip": "NIP-99",
+      "category": "addressable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Classified Listing",
+        "description": "Example of creating a Classified Listing event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30402,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 30403,
+      "name": "Draft Classified Listing",
+      "description": "Draft classified listing",
+      "summary": "Draft classified listing",
+      "nip": "NIP-99",
+      "category": "addressable",
+      "useCases": [
+        "Data organization",
+        "User preferences",
+        "Content curation"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "empty",
+        "description": "Usually empty, metadata is in tags",
+        "examples": [
+          "",
+          "Optional additional metadata"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Draft Classified Listing",
+        "description": "Example of creating a Draft Classified Listing event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30403,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        10000,
+        10001,
+        10002
+      ]
+    },
+    {
+      "kind": 30818,
+      "name": "Wiki Article",
+      "description": "Wiki article",
+      "summary": "Wiki article",
+      "nip": "NIP-54",
+      "category": "addressable",
+      "useCases": [
+        "Wiki Article functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Wiki Article content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Wiki Article",
+        "description": "Example of creating a Wiki Article event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 30818,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 31922,
+      "name": "Date-Based Calendar Event",
+      "description": "Addressable calendar event for all-day or multi-day events without specific times.",
+      "summary": "Addressable date-based calendar event event",
+      "nip": "NIP-52",
+      "category": "addressable",
+      "useCases": [
+        "Event planning",
+        "Schedule management",
+        "Social coordination"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Date-Based Calendar Event content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Date-Based Calendar Event",
+        "description": "Example of creating a Date-Based Calendar Event event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 31922,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 31923,
+      "name": "Time-Based Calendar Event",
+      "description": "Time-based calendar event",
+      "summary": "Time-based calendar event",
+      "nip": "NIP-52",
+      "category": "addressable",
+      "useCases": [
+        "Event planning",
+        "Schedule management",
+        "Social coordination"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Time-Based Calendar Event content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Time-Based Calendar Event",
+        "description": "Example of creating a Time-Based Calendar Event event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 31923,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31924
+      ]
+    },
+    {
+      "kind": 31924,
+      "name": "Calendar",
+      "description": "Calendar",
+      "summary": "Calendar",
+      "nip": "NIP-52",
+      "category": "addressable",
+      "useCases": [
+        "Calendar functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Calendar content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Calendar",
+        "description": "Example of creating a Calendar event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 31924,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923
+      ]
+    },
+    {
+      "kind": 31925,
+      "name": "Calendar Event RSVP",
+      "description": "Calendar event RSVP",
+      "summary": "Calendar event RSVP",
+      "nip": "NIP-52",
+      "category": "addressable",
+      "useCases": [
+        "Event planning",
+        "Schedule management",
+        "Social coordination"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Calendar Event RSVP content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Calendar Event RSVP",
+        "description": "Example of creating a Calendar Event RSVP event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 31925,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 32123,
+      "name": "Repository Announcement",
+      "description": "Repository announcement",
+      "summary": "Repository announcement",
+      "nip": "NIP-34",
+      "category": "addressable",
+      "useCases": [
+        "Repository Announcement functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Repository Announcement content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Repository Announcement",
+        "description": "Example of creating a Repository Announcement event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 32123,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 34550,
+      "name": "Community Definition",
+      "description": "Addressable event defining a community with metadata, rules, and moderation parameters.",
+      "summary": "Addressable community definition event",
+      "nip": "NIP-72",
+      "category": "addressable",
+      "useCases": [
+        "Community Definition functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Community Definition content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Community Definition",
+        "description": "Example of creating a Community Definition event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 34550,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        31922,
+        31923,
+        31924
+      ]
+    },
+    {
+      "kind": 39000,
+      "name": "Group Metadata",
+      "description": "Group metadata",
+      "summary": "Group metadata",
+      "nip": "NIP-29",
+      "category": "addressable",
+      "useCases": [
+        "User profile management",
+        "Identity verification",
+        "Social discovery"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Group Metadata content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Group Metadata",
+        "description": "Example of creating a Group Metadata event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 39000,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": [
+        3
+      ]
+    },
+    {
+      "kind": 39001,
+      "name": "Group Admins",
+      "description": "Group admins",
+      "summary": "Group admins",
+      "nip": "NIP-29",
+      "category": "addressable",
+      "useCases": [
+        "Group Admins functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Group Admins content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Group Admins",
+        "description": "Example of creating a Group Admins event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 39001,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
+    },
+    {
+      "kind": 39002,
+      "name": "Group Members",
+      "description": "Group members",
+      "summary": "Group members",
+      "nip": "NIP-29",
+      "category": "addressable",
+      "useCases": [
+        "Group Members functionality",
+        "Protocol compliance",
+        "Client integration"
+      ],
+      "implementationNotes": [
+        "This is an addressable event - use a unique d tag identifier",
+        "Addressable via coordinate: kind:pubkey:d_tag_value"
+      ],
+      "commonGotchas": [
+        "Missing or duplicate d tag identifiers",
+        "Not understanding coordinate-based addressing",
+        "Not validating event structure before publishing",
+        "Ignoring relay-specific requirements or limits"
+      ],
+      "requiredTags": [],
+      "optionalTags": [],
+      "contentSchema": {
+        "type": "text",
+        "description": "Plain text content",
+        "examples": [
+          "Group Members content",
+          "Example text content"
+        ]
+      },
+      "basicExample": {
+        "library": "ndk",
+        "title": "Create Group Members",
+        "description": "Example of creating a Group Members event",
+        "code": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 39002,\n  content: \"\",\n  tags: [\\n    ['d', 'unique-identifier']\\n  ]\n})\n\nawait event.publish()"
+      },
+      "relatedKinds": []
     }
   ],
+  "quickReference": {
+    "basic_events": {
+      "0": "User profile data (name, bio, picture) stored as JSON in content",
+      "1": "Basic text post - the main content type on Nostr",
+      "3": "User's follow list - who they follow on Nostr",
+      "4": "Deprecated encrypted direct messages event",
+      "5": "Event requesting deletion of previously published events ...",
+      "6": "Event that reposts another event by including the origina...",
+      "7": "Like, dislike, or emoji reaction to events",
+      "30023": "Long-form articles and blog posts with Markdown support"
+    },
+    "categories": {
+      "regular": "Normal events that are stored and broadcast",
+      "replaceable": "Latest event of this kind replaces older ones",
+      "addressable": "Replaceable events with unique identifiers (d tag)",
+      "ephemeral": "Temporary events not stored long-term"
+    },
+    "common_tags": {
+      "e": "Reference to another event (hex event ID)",
+      "p": "Reference to a pubkey (hex public key)",
+      "d": "Unique identifier for addressable events",
+      "t": "Hashtag or topic",
+      "r": "URL reference",
+      "k": "Event kind being referenced"
+    }
+  },
   "implementationGuides": {
     "gettingStarted": {
       "title": "Quick Start Guide for AI Agents",
       "steps": [
-        "1. Import the appropriate Nostr library (NDK recommended)",
-        "2. Set up relay connections and signer",
+        "1. Import the appropriate Nostr library (NDK or nostr-tools)",
+        "2. Set up relay connections and signer (NIP-07 for browser, private key for server)",
         "3. Choose the correct event kind for your use case",
-        "4. Structure the event with required tags and content",
+        "4. Structure the event with required tags and content format",
         "5. Validate the event structure before publishing",
-        "6. Handle errors and edge cases"
-      ]
+        "6. Handle errors and edge cases gracefully"
+      ],
+      "libraries": {
+        "ndk": {
+          "name": "NDK (Nostr Development Kit)",
+          "description": "Higher-level TypeScript library with caching and advanced features",
+          "install": "npm install @nostr-dev-kit/ndk",
+          "quickStart": "import NDK, { NDKEvent, NDKNip07Signer } from '@nostr-dev-kit/ndk'\n\nconst ndk = new NDK({\n  explicitRelayUrls: ['wss://relay.damus.io', 'wss://nos.lol'],\n  signer: new NDKNip07Signer()\n})\n\nawait ndk.connect()\n\nconst event = new NDKEvent(ndk, {\n  kind: 1,\n  content: \"Hello Nostr!\",\n  tags: []\n})\n\nawait event.publish()"
+        },
+        "nostr-tools": {
+          "name": "nostr-tools",
+          "description": "Lower-level JavaScript library for direct protocol interaction",
+          "install": "npm install nostr-tools",
+          "quickStart": "import { SimplePool, getPublicKey, finishEvent } from 'nostr-tools'\n\nconst pool = new SimplePool()\nconst relays = ['wss://relay.damus.io', 'wss://nos.lol']\n\nconst event = finishEvent({\n  kind: 1,\n  content: \"Hello Nostr!\",\n  tags: [],\n  created_at: Math.floor(Date.now() / 1000)\n}, privateKey)\n\nawait Promise.all(pool.publish(relays, event))"
+        }
+      }
     },
     "commonPatterns": {
       "creating_events": "Always validate required tags and content schema before publishing",
       "handling_replies": "Include proper e and p tags when replying to events",
       "addressable_events": "Use unique d tag identifiers for replaceable content",
-      "reactions": "Include both e (target event) and p (author) tags for reactions"
+      "reactions": "Include both e (target event) and p (author) tags for reactions",
+      "mentions": "Use p tags to mention users, include in both tags and content with nostr: prefix",
+      "hashtags": "Use t tags for topics, content can include # prefix but tags should not"
     },
     "validation_rules": {
       "json_content": "Validate JSON.parse() for kinds that require JSON content (kind 0)",
       "required_tags": "Check that all required tags are present before publishing",
       "tag_format": "Ensure tags follow the correct format: [name, value, ...extras]",
-      "content_limits": "Be aware of reasonable content length limits for different event kinds"
+      "content_limits": "Be aware of reasonable content length limits for different event kinds",
+      "timestamps": "Use Unix timestamps (seconds since epoch), not milliseconds",
+      "hex_encoding": "Event IDs and pubkeys must be lowercase hex strings"
     }
   },
   "troubleshooting": {
     "common_errors": {
-      "invalid_json": "For kind 0 (profiles), ensure content is valid JSON",
+      "invalid_json": "For kind 0 (profiles), ensure content is valid JSON string",
       "missing_tags": "Check that required tags (e.g., 'd' for addressable events) are included",
       "malformed_tags": "Tags must be arrays with string elements",
-      "signature_failures": "Ensure signer is properly configured and connected"
+      "signature_failures": "Ensure signer is properly configured and connected",
+      "relay_errors": "Try different relays if publishing fails",
+      "timestamp_issues": "Ensure created_at is a Unix timestamp in seconds"
     },
     "debugging_tips": [
-      "Use validateEventStructure() to check event format before publishing",
+      "Use validateEventStructure() function to check event format before publishing",
       "Test with known-good relays first (wss://relay.damus.io, wss://nos.lol)",
       "Check network connectivity and relay response times",
-      "Verify event signatures and timestamps are correct"
+      "Verify event signatures and timestamps are correct",
+      "Use browser dev tools to inspect WebSocket connections",
+      "Check relay policies - some relays have specific requirements"
+    ],
+    "testing_relays": [
+      "wss://relay.damus.io",
+      "wss://nos.lol",
+      "wss://relay.snort.social",
+      "wss://pyramid.fiatjaf.com"
     ]
+  },
+  "bestPractices": {
+    "relay_selection": "Use multiple relays for redundancy, include popular relays for discovery",
+    "event_validation": "Always validate event structure before publishing to avoid errors",
+    "error_handling": "Implement proper error handling for network issues and relay rejections",
+    "content_sanitization": "Sanitize user input to prevent malicious content",
+    "private_data": "Never include private keys or sensitive data in event content",
+    "rate_limiting": "Respect relay rate limits to avoid being banned"
   }
 }
