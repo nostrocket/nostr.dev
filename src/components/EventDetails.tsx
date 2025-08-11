@@ -81,14 +81,14 @@ export function EventDetails({ eventKind }: EventDetailsProps) {
           <h3 className="text-lg font-semibold text-gray-900 mb-3">Common Tags</h3>
           <div className="space-y-2">
             {eventKind.tags.map((tag, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <code className="bg-white px-2 py-1 rounded text-sm font-mono border">
+              <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <code className="bg-white dark:bg-gray-700 px-2 py-1 rounded text-sm font-mono border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                   {tag.name}
                 </code>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-700">{tag.description}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{tag.description}</p>
                   {tag.required && (
-                    <span className="inline-block mt-1 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
+                    <span className="inline-block mt-1 text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-0.5 rounded">
                       Required
                     </span>
                   )}
