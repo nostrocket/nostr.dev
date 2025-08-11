@@ -1,6 +1,6 @@
 # Nostr Event Kinds Reference
 
-A comprehensive, searchable reference for Nostr event kinds with documentation and library usage examples.
+A lightning-fast, searchable reference for all 95+ Nostr event kinds with instant fuzzy search, direct URL navigation, and ready-to-use code examples for NDK.
 
 ## Features
 
