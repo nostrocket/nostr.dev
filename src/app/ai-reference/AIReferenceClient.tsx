@@ -1,12 +1,28 @@
 'use client'
 
-import { aiEventReference, getAllImplementationNotes, getCommonGotchas } from '@/data/ai-event-reference'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import aiDocumentation from '@/data/ai-documentation.json'
 
 export function AIReferenceClient() {
-  const allNotes = getAllImplementationNotes()
-  const allGotchas = getCommonGotchas()
+  const aiEventReference = aiDocumentation.eventReference
+  
+  // Recreate the same data structure as the old functions
+  const allNotes = aiEventReference
+    .filter(event => event.implementationNotes && event.implementationNotes.length > 0)
+    .map(event => ({
+      kind: event.kind,
+      name: event.name,
+      notes: event.implementationNotes || []
+    }))
+  
+  const allGotchas = aiEventReference
+    .filter(event => event.commonGotchas && event.commonGotchas.length > 0)
+    .map(event => ({
+      kind: event.kind,
+      name: event.name,
+      gotchas: event.commonGotchas || []
+    }))
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
